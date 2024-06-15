@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更新資料</title>
+</head>
+<body>
+    <h1>更新資料</h1>
+    <form id="updateUserForm">
+        <label for="user_id">User ID:</label>
+        <input type="text" id="user_id" name="user_id" required><br><br>
+        <label for="type">資料類型:</label>
+        <select id="type" name="type" required onchange="toggleFields()">
+            <option selected disabled hidden>請選擇</option>
+            <option value="sport">運動</option>
+            <option value="health">健康</option>
+        </select><br><br>
+        <div id="sportFields" style="display:none;">
+            <label for="time">Time:</label>
+            <input type="text" id="time" name="time"><br><br>
+            <label for="distance">Distance:</label>
+            <input type="text" id="distance" name="distance"><br><br>
+            <label for="times">Times:</label>
+            <input type="text" id="times" name="times"><br><br>
+        </div>
+        <div id="healthFields" style="display:none;">
+            <label for="MHR">Maximal Heart Rate:</label>
+            <input type="text" id="MHR" name="MHR"><br><br>
+            <label for="sbp">Systolic Blood Pressure:</label>
+            <input type="text" id="sbp" name="sbp"><br><br>
+            <label for="dbp">Diastolic Blood Pressure:</label>
+            <input type="text" id="dbp" name="dbp"><br><br>
+            <label for="height">Height:</label>
+            <input type="text" id="height" name="height"><br><br>
+            <label for="weight">Weight:</label>
+            <input type="text" id="weight" name="weight"><br><br>
+        </div>
+        <button type="button" onclick="updateUser()">更新</button>
+        <button onclick="location.href='/'">回主頁</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function toggleFields() {
+            const type = document.getElementById('type').value;
+            if (type === 'sport') {
+                document.getElementById('sportFields').style.display = 'block';
+                document.getElementById('healthFields').style.display = 'none';
+            } else if (type === 'health') {
+                document.getElementById('sportFields').style.display = 'none';
+                document.getElementById('healthFields').style.display = 'block';
+            }
+        }
+
+        async function updateUser() {
+            const user_id = document.getElementById('user_id').value;
+            const type = document.getElementById('type').value;
+            let data = {
+                user_id: user_id
+            };
+
+            if (type === 'sport') {
+                data.time = document.getElementById('time').value;
+                data.distance = document.getElementById('distance').value;
+                data.times = document.getElementById('times').value;
+            } else if (type === 'health') {
+                data.MHR = document.getElementById('MHR').value;
+                data.sbp = document.getElementById('sbp').value;
+                data.dbp = document.getElementById('dbp').value;
+                data.height = document.getElementById('height').value;
+                data.weight = document.getElementById('weight').value;
+            }
+
+            const response = await fetch(`/updateUser/${type}/${user_id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            const messageElement = document.getElementById('result');
+            messageElement.innerText = result.message;
+
+            // 3秒後清空消息
+            setTimeout(() => {
+                messageElement.innerText = '';
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>

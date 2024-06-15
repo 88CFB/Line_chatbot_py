@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刪除用戶</title>
+</head>
+<body>
+    <h1>刪除用戶</h1>
+    <form id="deleteUserForm">
+        <label for="user_id">User ID:</label>
+        <input type="text" id="user_id" name="user_id" required><br><br>
+        <button type="button" onclick="deleteUser()">刪除</button>
+        <button onclick="location.href='/'">回主頁</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        async function deleteUser() {
+            const user_id = document.getElementById('user_id').value;
+            const response = await fetch(`/deleteUser/${user_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+            const messageElement = document.getElementById('result');
+            messageElement.innerText = result.message;
+
+            // 3秒後清空消息
+            setTimeout(() => {
+                messageElement.innerText = '';
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>
